@@ -1,4 +1,4 @@
-import React, {useContext, useState, useLayoutEffect} from 'react';
+import React, {useContext, useState, useEffect, useLayoutEffect} from 'react';
 import {
   View,
   Text,
@@ -12,10 +12,18 @@ import Icon from 'react-native-vector-icons/Feather';
 import {Context as BlogContext} from '../context/BlogContext';
 function IndexScreen({navigation}) {
   const [input, setInput] = useState('');
-  const {state: blogPosts, addBlogPost, deleteBlogPost} = useContext(
+  const {state: blogPosts, getBlogPosts, deleteBlogPost} = useContext(
     BlogContext,
   );
-
+  useEffect(() => {
+    getBlogPosts();
+    const listener = navigation.addListener('didFocus', () => {
+      getBlogPosts();
+    });
+    return () => {
+      listener.remove();
+    };
+  }, []);
   useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (

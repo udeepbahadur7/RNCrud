@@ -1,3 +1,14 @@
 {
-  "blogposts": []
+  "blogposts": [
+    {
+      "title": "Updated Blog post",
+      "content": "content for my post",
+      "id": 1
+    },
+    {
+      "title": "Udeep's new post",
+      "content": "oh my gwaad. i'm react native developer",
+      "id": 2
+    }
+  ]
 }
