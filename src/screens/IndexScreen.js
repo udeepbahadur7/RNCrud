@@ -1,28 +1,77 @@
-import React, {useContext, useState} from 'react';
-import {View, Text, StyleSheet, FlatList, Button} from 'react-native';
+import React, {useContext, useState, useLayoutEffect} from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  FlatList,
+  Button,
+  TouchableOpacity,
+} from 'react-native';
+import {useNavigation} from '@react-navigation/native';
+import Icon from 'react-native-vector-icons/Feather';
 import {Context as BlogContext} from '../context/BlogContext';
-import {TextInput} from 'react-native-gesture-handler';
-
-function IndexScreen() {
+function IndexScreen({navigation}) {
   const [input, setInput] = useState('');
-  const {state: blogPosts, addBlogPost} = useContext(BlogContext);
+  const {state: blogPosts, addBlogPost, deleteBlogPost} = useContext(
+    BlogContext,
+  );
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <TouchableOpacity
+          onPress={() => {
+            navigation.navigate('Create');
+          }}>
+          <Icon name="plus" size={22} />
+        </TouchableOpacity>
+      ),
+    });
+  }, [navigation]);
   return (
-    <View>
+    <>
       <Text>Index Screen</Text>
       {/* <TextInput
         onChangeText={text => setInput(text)}
         onEndEditing={() => addBlogPost(input)}
       /> */}
-      <Button title="Add Blog Post" onPress={addBlogPost} />
 
       <FlatList
-        keyExtractor={blogPost => blogPost.title}
+        keyExtractor={blogPost => blogPost.id.toString()}
         data={blogPosts}
-        renderItem={({item}) => <Text>{item.title}</Text>}
+        renderItem={({item}) => (
+          <TouchableOpacity
+            onPress={() => navigation.navigate('Show', {id: item.id})}>
+            <View style={styles.rowStyle}>
+              <Text style={styles.titleStyle}>
+                {item.title} - {item.id}
+              </Text>
+              <TouchableOpacity onPress={() => deleteBlogPost(item.id)}>
+                <Icon style={styles.iconStyle} name="trash-2" />
+              </TouchableOpacity>
+            </View>
+          </TouchableOpacity>
+        )}
       />
-    </View>
+    </>
   );
 }
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  rowStyle: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingVertical: 20,
+    borderTopWidth: 1,
+    borderColor: 'gray',
+    paddingHorizontal: 10,
+  },
+  titleStyle: {
+    fontSize: 18,
+  },
+  iconStyle: {
+    fontSize: 24,
+    color: 'red',
+  },
+});
 export default IndexScreen;
